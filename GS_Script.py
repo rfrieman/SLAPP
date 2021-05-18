@@ -13,11 +13,10 @@ import matplotlib.image as mpimg
 with open('GSData.csv', 'r') as file: #Finds .csv file by name in folder script is saved in.
     data = csv.reader(file)
     data = list(data)
-
 length = len(data)
-#50113
+
 #assigns names to the columns in csv file. 
-#[float(data[i][column#]) for i in range(First cell#,Last cell#,1)]
+#[float(data[i][column#]) for i in range(First cell#,length variable assigned above,1)]
 xx = [float(data[i][1]) for i in range(1,length,1)]
 yy = [float(data[i][0]) for i in range(1,length,1)]
 zz = [float(data[i][2]) for i in range(1,length,1)]
@@ -25,7 +24,7 @@ zz = [float(data[i][2]) for i in range(1,length,1)]
 #=========================================================================================================================
 #=========================================================================================================================
 
-#Figure size variables
+#Figure size variables in inches
 Length = 75
 Width = 20
 font = 40
@@ -56,9 +55,12 @@ norm = mpl.colors.LogNorm(vmax=maxval, vmin=minval)
 #Plot figure 1, assign its size in inches.
 #plt.figure(figure#, figsize=(width#,length#))
 plt.figure(1, figsize=(Width, Length))
-plt.rcParams['axes.facecolor'] = 'black' #background color of plot 
 
+#Set the color of the background
+plt.rcParams['axes.facecolor'] = 'black' 
 
+#Scatter plot
+#plt.scatter(dataframename.x, dataframename.y, s=size of symbol, c=dataframename.z, cmap=colormap(see line 49), marker=verts(see line 41), edgecolor=none, norm=norm(see line 50))
 scatter = plt.scatter(data.x, data.y, s=85, c=data.z, cmap=colormap, marker=verts, alpha=1, edgecolor="none", norm=norm) #plots grainsize data
 
 
