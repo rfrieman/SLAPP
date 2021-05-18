@@ -1,0 +1,64 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import csv
+from matplotlib import cm
+import math as m
+import scipy
+from scipy.interpolate import interp1d
+from scipy.signal import find_peaks
+from itertools import zip_longest
+import pandas as pd
+import os
+
+
+#checks to see if nppeaks.csv exists, so it can write to it.
+
+print("If this scripts encounters an error, restarting Python may be necessary because the write file remains in an 'open' state.")
+
+if os.path.isfile(r'C:\Users\ags-research\Documents\Python Scripts\nppeaks.csv'):
+    ans = input("File exists, delete yes (1) or no (0)").strip()
+    if(ans == '1' or ans == 'yes'):
+        os.remove(r'C:\Users\ags-research\Documents\Python Scripts\nppeaks.csv')
+
+f = open(r'nppeaks.csv', 'a', newline='')
+writer = csv.writer(f)
+
+with open(r'C:\Users\ags-research\Desktop\Grainsizeplot\GSData.csv', 'r') as file:
+    data = csv.reader(file)
+    data = list(data)
+
+#in case future runs include more than 116 different grain sizes, prompt for input
+sizestr = input("How many different grainsizes are there? (if unknown, probably 116)")
+sizeint = int(sizestr)
+
+# ======================================
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#The number 116 is how many different grain sizes there are per run.
+levels = int(len(data)/sizeint)
+for k in range(1,levels,1):
+
+ data1 = [float(data[i][2]) for i in range(k*sizeint,sizeint+k*sizeint,1)]
+ gsize = [float(data[i][1]) for i in range(k*sizeint,sizeint+k*sizeint,1)]
+
+ sumpg = 0.; sumpercent = 0.0
+ for i in range(0,sizeint,1):
+  sumpercent = sumpercent + data1[i]
+  sumpg = sumpg + data1[i]*gsize[i]
+
+ n = len(data1);
+
+ x = [m.log10(gsize[i]) for i in range(0,sizeint,1)]
+
+ plt.plot(x,data1)
+ 
+ xmax, properties = find_peaks(data1, distance=3, height=0, prominence=0, width=0)
+
+ datamax = [data1[i] for i in xmax]
+
+#appending a document, must continue to embedded in loop:
+
+ for i in range(0,len(datamax)):
+     fields = [data[k*sizeint][0]] + [datamax[i]] + [(xmax[i]+1)] #added 1 to xmax, so starts at 1 not 0
+     writer.writerow(fields)
+
+f.close()    
