@@ -38,7 +38,7 @@ plt.fill_betweenx(Units.y, 0, 1.5, where=Units.x == 1.5, interpolate = False, co
 
 #titles and limits
 plt.title('Stratigraphy', fontsize=font)
-plt.xticks(fontsize=font) #font size of axis labels
+plt.xticks(fontsize=0) #font size of axis labels
 plt.yticks(fontsize=font)
 plt.xlabel("", fontsize=0) #labels for axis
 plt.ylabel("Depth (m)", fontsize=font)
