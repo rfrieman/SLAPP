@@ -1,50 +1,58 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy
 from scipy import signal
 import math
 import csv
-
 from lmfit import models
 
-
+# Open the data file; Typically first 3 columns are sample #, grain size, and percent
 with open(r'C:\Users\ags-research\Desktop\SLAPP Things\SLAPP Master 2_22_21\Python\wavelet_test_data.csv', 'r') as file:
     data = csv.reader(file)
     data = list(data)
-#print(data)
 
-perc = [float(data[i][2]) for i in range(116,232,1)]
-gsize = [float(data[i][1]) for i in range(116,232,1)]
-#print(perc)
-#print(gsize)
+# Each sample is divided into 116 discrete grain size bins; nesting the code in this for loop allows it to run a bunch of grainsizes in one go
+sizeint = 116
+levels = int(len(data)/sizeint)
+for k in range(0,levels,1):
 
+    perc = [float(data[i][2]) for i in range(k*sizeint,sizeint+k*sizeint,1)]
+    gsize = [float(data[i][1]) for i in range(k*sizeint,sizeint+k*sizeint,1)]
 
-xinit = gsize
-xlog = [math.log(xval) for xval in xinit]
-x = np.array(xlog)
-y = np.array(perc)
-print(x)
-print(y)
-# #plt.plot(x, y, label='test')
+    #initial gsizes are scaled logarithmically, so I convert ahead of time
+    xinit = gsize
+    xlog = [math.log(xval) for xval in xinit]
+    x = np.array(xlog)
+    y = np.array(perc)
 
-peaks = signal.find_peaks_cwt(y, (1.5, 25))             
-xstep = x.ptp() / len(x)
+    peaks = signal.find_peaks_cwt(y, (1.5, 25))             
+    xstep = x.ptp() / len(x)
 
-model, params = None, None
+    model, params = None, None
 
-for i, peak_index in enumerate(peaks):
-    this_model = models.GaussianModel(prefix=f'p{1+i:d}_')
-    this_params = this_model.make_params(amplitude=y[peak_index], center=x[peak_index], sigma=2*xstep)
-    if model is None:
-        model = this_model
-        params = this_params
-    else:
-        model += this_model
-        params.update(this_params)
+    for i, peak_index in enumerate(peaks):
+        this_model = models.GaussianModel(prefix=f'p{1+i:d}_')
+        this_params = this_model.make_params(amplitude=y[peak_index], center=x[peak_index], sigma=2*xstep)
+        if model is None:
+            model = this_model
+            params = this_params
+        else:
+            model += this_model
+            params.update(this_params)
         
-result = model.fit(y, params, x=x)
-print(result.fit_report())
+        result = model.fit(y, params, x=x)
+        print(result.fit_report())
 
-plt.plot(x, y, label='data')
-plt.plot(x, result.best_fit, label='fit')
-plt.legend()
-plt.show()
+#@@@@@@@@ Below are some attempts at plotting the normal distribution curves independently
+# mean = 2.87351121
+# standard_deviation = 1
+
+# x_values = np.arange(-2, 7, 0.1)
+# y_values = scipy.stats.norm(mean, standard_deviation)
+
+# plt.plot(x_values, y_values.pdf(x_values))
+#@@@@@@@@
+    plt.plot(x, y, label='data')
+    plt.plot(x, result.best_fit, label='fit')
+    plt.legend()
+    plt.show()
