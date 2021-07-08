@@ -15,11 +15,13 @@ with open('GSData.csv', 'r') as file: #Finds .csv file by name in folder script 
     data = list(data)
 length = len(data)
 
-#assigns names to the columns in csv file. 
+#assigns names to the columns in csv file.
+
+##MAKE SURE ALL UNDERSCORES ARE REPLACED WITH PERIODS. THIS SHOULD BE THE ONLY CHANGE NEEDED 
 #[float(data[i][column#]) for i in range(First cell#,length variable assigned above,1)]
-xx = [float(data[i][1]) for i in range(1,length,1)]
+xx = [float(data[i][4]) for i in range(1,length,1)]
 yy = [float(data[i][0]) for i in range(1,length,1)]
-zz = [float(data[i][2]) for i in range(1,length,1)]
+zz = [float(data[i][5]) for i in range(1,length,1)]
 
 #=========================================================================================================================
 #=========================================================================================================================
